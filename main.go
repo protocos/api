@@ -66,30 +66,59 @@ func main() {
 
 	router.POST("/twitter", func(c *gin.Context) {
 		defer panicPrevention()
-		var twitterRequest URLRequest
-		c.Bind(&twitterRequest)
-		spew.Dump(twitterRequest)
+		var request URLRequest
+		c.Bind(&request)
+		spew.Dump(request)
 
-		resp, err := http.Get(twitterRequest.Url)
-		if err != nil {
-			spew.Dump(err)
-		}
-		defer resp.Body.Close()
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			spew.Dump(err)
-		}
-		bodyString := string(bodyBytes)
+		pageSource := getWebpageSource(request)
 
 		r, _ := regexp.Compile("<title>(.+?)</title>")
-		matches := r.FindStringSubmatch(bodyString)
+		matches := r.FindStringSubmatch(pageSource)
 		str := matches[1]
 		str = html.UnescapeString(str)
 
 		c.JSON(http.StatusOK, str)
 	})
 
+	router.POST("/amazon", func(c *gin.Context) {
+		defer panicPrevention()
+		var request URLRequest
+		c.Bind(&request)
+		spew.Dump(request)
+
+		pageSource := getWebpageSource(request)
+
+		divRegex, _ := regexp.Compile("<div.+ebooksImageBlockContainer.+>(.|\n)*?</div>")
+		matches := divRegex.FindStringSubmatch(pageSource)
+		divBlock := matches[0]
+
+		spew.Dump(divBlock)
+		imgRegex, _ := regexp.Compile("<img.+src=\"((.|\n)*?)\".+>")
+		matches = imgRegex.FindStringSubmatch(divBlock)
+		imgBlock := matches[1]
+
+		imgLink := html.UnescapeString(imgBlock)
+
+		c.JSON(http.StatusOK, imgLink)
+	})
+
 	router.Run(":" + port)
+}
+
+func getWebpageSource(request URLRequest) string {
+
+	resp, err := http.Get(request.Url)
+	if err != nil {
+		spew.Dump(err)
+	}
+	defer resp.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		spew.Dump(err)
+	}
+	bodyAsString := string(bodyBytes)
+
+	return bodyAsString
 }
 
 type Expression struct {
