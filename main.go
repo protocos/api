@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/Knetic/govaluate"
 	"github.com/davecgh/go-spew/spew"
@@ -98,8 +99,10 @@ func main() {
 		imgBlock := matches[1]
 
 		imgLink := html.UnescapeString(imgBlock)
+		imgLink = strings.Replace(imgLink, "https://", "", -1)
+		imgLink = strings.Replace(imgLink, "http://", "", -1)
 
-		c.JSON(http.StatusOK, imgLink)
+		c.String(http.StatusOK, imgLink)
 	})
 
 	router.Run(":" + port)
