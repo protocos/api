@@ -1,0 +1,12 @@
+{
+  "name": "API",
+  "description": "Simple API written in Go",
+  "keywords": [
+    "api",
+    "go",
+    "sample",
+    "example"
+  ],
+  "website": "http://github.com/protocos/api",
+  "repository": "http://github.com/protocos/api"
+}
