@@ -88,7 +88,7 @@ func main() {
 
 		pageSource := getWebpageSource(request)
 
-		divRegex, _ := regexp.Compile("<div.+ebooksImageBlockContainer.+>(.|\n)*?</div>")
+		divRegex, _ := regexp.Compile("<div.+mageBlockContainer.+>(.|\n)*?</div>")
 		matches := divRegex.FindStringSubmatch(pageSource)
 		divBlock := matches[0]
 
