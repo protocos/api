@@ -92,10 +92,10 @@ func main() {
 		matches := divRegex.FindStringSubmatch(pageSource)
 		divBlock := matches[0]
 
-		spew.Dump(divBlock)
-		imgRegex, _ := regexp.Compile("<img.+src=\"((.|\n)*?)\".+>")
+		imgRegex, _ := regexp.Compile("https://.+?\\.jpg")
 		matches = imgRegex.FindStringSubmatch(divBlock)
-		imgBlock := matches[1]
+		spew.Dump(matches)
+		imgBlock := matches[0]
 
 		imgLink := html.UnescapeString(imgBlock)
 
